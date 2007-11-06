@@ -1,4 +1,4 @@
-
+ï»¿
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Attachment checking tool for Outlook
  
@@ -22,7 +22,7 @@ Installation
 Usage
 =====
 
-Every time you send a email with the keyword "attach*" (case insensitive) or "¸½¼þ" (This is Chinese for the word "attachment") in the message body or subject without attaching an attachment, a message box will pop up to warn you about this and let you choose whether you really want to send the mail.
+Every time you send a email with the keyword "attach*" (case insensitive) or "é™„ä»¶" (This is Chinese for the word "attachment") in the message body or subject without attaching an attachment, a message box will pop up to warn you about this and let you choose whether you really want to send the mail.
 
 =========
 Copyright
