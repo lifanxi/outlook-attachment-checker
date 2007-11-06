@@ -1,0 +1,58 @@
+﻿Private Sub Application_ItemSend(ByVal Item As Object, Cancel As Boolean)
+
+    ' Originally from http://www.danevans.co.uk/vba/
+    ' Rewrite by Li Fanxi (lifanxi <AT> freemindworld.com)
+    
+    Dim oldMsgStartPos As Integer
+    Dim thisMsg As String
+    Dim i As Integer
+    Dim found As Boolean
+    Dim promptMsg As String
+    
+    ' The array for strings that want to be detected
+    ' If you add strings to this array, don't forget to change the ubound of the array in the definition
+    ' The strings should be stored in lower case
+    Dim pattern(1) As String
+    pattern(0) = "attach"
+    pattern(1) = "附件"
+    
+    found = False
+    
+    ' Filter out the old message and make the message in low case
+    ' For plain text mail
+    oldMsgStartPos = InStr(Item.Body, "-----Original Message-----")
+    ' For HTML mail
+    If oldMsgStartPos = 0 Then
+        oldMsgStartPos = InStr(Item.Body, " _____ ")
+        If oldMsgStartPos > 1 And oldMsgStartPos + 7 <= Len(Item.Body) Then
+            If Asc(Mid(Item.Body, oldMsgStartPos - 1, 1)) = 63 And Asc(Mid(Item.Body, oldMsgStartPos + 7, 1)) = 63 Then
+                oldMsgStartPos = oldMsgStartPos - 1
+            End If
+        End If
+    End If
+    
+    ' Get the lower case version of the message body and subject for this message
+    If oldMsgStartPos = 0 Then
+        thisMsg = LCase(Item.Body + " " + Item.Subject)
+    Else
+        thisMsg = LCase(Left(Item.Body, oldMsgStartPos) + " " + Item.Subject)
+    End If
+   
+    ' Search each pattern in the message body and subject
+    For i = LBound(pattern) To UBound(pattern)
+        If InStr(thisMsg, pattern(i)) > 0 Then
+            found = True
+            Exit For
+        End If
+    Next i
+    
+    ' If found, prompt the user
+    If found And Item.Attachments.Count = 0 Then
+        promptMsg = "You have mentioned about an attachment in the message but it doesn't have one." & vbCrLf & "Send the message anyway?"
+        If MsgBox(promptMsg, vbYesNo + vbDefaultButton2 + vbInformation, "You may forget the attachment") = vbNo Then
+            Cancel = True
+        End If
+    End If
+    
+End Sub
+
