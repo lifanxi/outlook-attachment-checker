@@ -1,9 +1,46 @@
-﻿Private Sub Application_ItemSend(ByVal Item As Object, Cancel As Boolean)
+﻿Option Explicit
+
+
+Private Function GetMessageSeparatePos(ByRef msg As String)
+    Dim msgStartPosPlain As Long
+    Dim msgStartPosHTML As Long
+    Dim msgStartPosRTF As Long
+    Dim minPos As Long
+    
+    minPos = Len(msg) + 1
+    
+    ' For plain text mail
+    msgStartPosPlain = InStr(msg, "-----Original Message-----")
+    ' For HTML mail
+    msgStartPosHTML = InStr(msg, " _____ ")
+    If msgStartPosHTML > 1 And msgStartPosHTML + 7 <= Len(msg) Then
+        If Asc(Mid(msg, msgStartPosHTML - 1, 1)) = 63 And Asc(Mid(msg, msgStartPosHTML + 7, 1)) = 63 Then
+            msgStartPosHTML = msgStartPosHTML - 1
+        Else
+            msgStartPosHTML = 0
+        End If
+    End If
+    ' For RTF mail
+    msgStartPosRTF = InStr(msg, "_____________________________________________")
+    
+    If msgStartPosPlain <> 0 And msgStartPosPlain < minPos Then minPos = msgStartPosPlain
+    If msgStartPosHTML <> 0 And msgStartPosHTML < minPos Then minPos = msgStartPosHTML
+    If msgStartPosRTF <> 0 And msgStartPosRTF < minPos Then minPos = msgStartPosRTF
+    
+    If minPos = Len(msg) + 1 Then
+        GetMessageSeparatePos = 0
+    Else
+        GetMessageSeparatePos = minPos
+    End If
+
+End Function
+
+Private Sub Application_ItemSend(ByVal Item As Object, Cancel As Boolean)
 
     ' Originally from http://www.danevans.co.uk/vba/
-    ' Rewrite by Li Fanxi (lifanxi <AT> freemindworld.com)
+    ' Modified by Li Fanxi (lifanxi <AT> freemindworld.com)
     
-    Dim oldMsgStartPos As Integer
+    Dim oldMsgStartPos As Long
     Dim thisMsg As String
     Dim i As Integer
     Dim found As Boolean
@@ -12,24 +49,16 @@
     ' The array for strings that want to be detected
     ' If you add strings to this array, don't forget to change the ubound of the array in the definition
     ' The strings should be stored in lower case
-    Dim pattern(1) As String
+    Dim pattern(2) As String
     pattern(0) = "attach"
     pattern(1) = "附件"
+    pattern(2) = "enclos"
     
     found = False
     
-    ' Filter out the old message and make the message in low case
-    ' For plain text mail
-    oldMsgStartPos = InStr(Item.Body, "-----Original Message-----")
-    ' For HTML mail
-    If oldMsgStartPos = 0 Then
-        oldMsgStartPos = InStr(Item.Body, " _____ ")
-        If oldMsgStartPos > 1 And oldMsgStartPos + 7 <= Len(Item.Body) Then
-            If Asc(Mid(Item.Body, oldMsgStartPos - 1, 1)) = 63 And Asc(Mid(Item.Body, oldMsgStartPos + 7, 1)) = 63 Then
-                oldMsgStartPos = oldMsgStartPos - 1
-            End If
-        End If
-    End If
+    
+    ' Find out the old message start position
+    oldMsgStartPos = GetMessageSeparatePos(Item.Body)
     
     ' Get the lower case version of the message body and subject for this message
     If oldMsgStartPos = 0 Then
