@@ -1,5 +1,3 @@
-# Outlook attachment checker installation guide
-
 = Introduction =
 
 Follow the following steps to install this program.
@@ -7,14 +5,9 @@ Follow the following steps to install this program.
 
 = Steps =
 
-- Download the oac.zip file and unzip it.
-
-- Copy the file extracted to %APPDATA%\Microsoft\Outlook folder.
-
-- Start Outlook.
-
-- Go to "Tools->Macros->Macros..."
-
-- When the security dialog box pops up, choose always believe the publisher and enable the macro.
-
-- You are ready to use it.
+  # Download the oac.zip file and unzip it.
+  # Copy the file extracted to %APPDATA%\Microsoft\Outlook folder.
+  # Start Outlook.
+  # Go to "Tools->Macros->Macros..."
+  # When the security dialog box pops up, choose always believe the publisher and enable the macro.
+  # You are ready to use it.
