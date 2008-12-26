@@ -78,8 +78,9 @@ Private Sub Application_ItemSend(ByVal Item As Object, Cancel As Boolean)
     ' If found, prompt the user
     If found And Item.Attachments.Count = 0 Then
         promptMsg = "You have mentioned about an attachment in the message but it doesn't have one." & vbCrLf & "Send the message anyway?"
-        If MsgBox(promptMsg, vbYesNo + vbDefaultButton2 + vbInformation, "You may forget the attachment") = vbNo Then
+        If MsgBox(promptMsg, vbYesNo + vbDefaultButton2 + vbInformation + vbMsgBoxSetForeground, "You may forget the attachment") = vbNo Then
             Cancel = True
+	    Item.Display
         End If
     End If
     
