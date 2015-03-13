@@ -1,0 +1,1 @@
+This VBA script helps to remind you when you are sending an email  without any attachment while you have mentioned about attachments in the message body.
